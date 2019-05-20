@@ -24,6 +24,18 @@ Here are some terms concerning our dataset that you should know going forward:
  - Action: any drop, stall, turn, assist or goal
  - Playing time: how many points a player participated in during the season.  This is not a measure of time (like minutes or hours) a player spent on the field, but rather how many times he was one of the seven people put on the line at the beginnning of a point.  If you're unfamiliar with the game flow of an ultimate frisbee game, [click here](https://www.youtube.com/watch?v=YkMMqOUNyKk) to learn more.
  - 
+ ```markdown
+ {r part 1, RESULTS=HIDE}
+stats <- read_csv("SpaceBastards-stats.csv")
+
+stats <- stats %>%
+  select("Date/Time", tournament = "Tournamemnt", opponent = "Opponent", time = "Point Elapsed Seconds", "Line", 
+         ourscore = "Our Score - End of Point", theirscore = "Their Score - End of Point", "Event Type", 
+         "Action", "Passer", rec = "Receiver", "Defender", p0 = "Player 0", p1 = "Player 1", p2 = "Player 2", p3 = "Player 3", p4 = "Player 4",
+         p5 = "Player 5", p6 = "Player 6")
+
+stats
+```
 
 ### Parsing and Data Management
 Once we had it, we had to do a lot of cleaning and maniupulation to make the data usable, as it was not in the same format that it appeared in on the very user-friendly site.  Columns needed to be renamed.
@@ -32,7 +44,64 @@ The biggest portion of this step was dedicated to calculating the Plus-Minus val
 
 After grouping all the actions by player
 ```markdown
+{r part 2}
+plusminus <- stats %>%
+  select(Action, Passer) %>%
+  group_by(Passer) %>%
+  count(Action)
 
+totalpass <- function(data) {
+  ifelse(data[2] == "Throwaway" || data[2] == "Drop" || data[2] == "Stall" || data[2] == "Callahan", data[3] <- as.numeric(data[3]) * -1, 
+         ifelse(data[2] == "Goal", as.numeric(data[3]), 0)
+  )
+}
+
+totalrec <- function(data) {
+  sum <- 0
+         ifelse(data[2] == "Goal", sum <- sum + as.numeric(data[3]),
+              ifelse(data[2] == "Throwaway", sum <- sum - as.numeric(data[3]),
+                     ifelse(data[2] == "Stall", sum <- sum - as.numeric(data[3]),
+                            ifelse(data[2] == "Callahan", sum <- sum - as.numeric(data[3]), sum
+                            )
+                     )
+              )
+         )
+         
+                                  
+  sum
+}  
+
+rows <- dim(plusminus)[1]; plusminus <- plusminus[1:(rows - 6),] #Remove last 6 entries, not useful
+
+plusminuscol <- plusminus %>% #Create a vector using the total function that makes unfavorable things like drops/throwaways/etc become negative
+  group_by(Passer) %>%
+  apply(1, totalpass)
+
+plusminuspassing <- aggregate(plusminuscol, by = list(Passer = plusminus$Passer), FUN=sum) #New column by summing throwing +/- for each player
+colnames(plusminuspassing)[2] <- "x" #Rename
+
+plusminus <- stats %>%
+  select(Action, rec) %>%
+  group_by(rec) %>%
+  count(Action)
+
+plusminusgoals <- plusminus[plusminus$Action == "Goal",]
+colnames(plusminusgoals)[1] <- "Passer"
+
+plusminusrec <- merge(plusminusgoals, plusminuspassing, by="Passer"); plusminusrec$Action <- NULL #Remove action col
+
+plusminusrec <- plusminusrec %>%
+  mutate("+ / -" = (plusminusrec$n + plusminusrec$x))
+
+plusminusrec$n <- NULL; plusminusrec$x <- NULL;
+```
+
+Playing time stuff
+```markdown
+points <- stats %>%
+  group_by(tournament, opponent, time, Line, ourscore, theirscore, p0, p1, p2, p3, p4, p5, p6) %>%
+  count()
+points 
 ```
 
 ### Exploratory Data Analysis
@@ -42,7 +111,7 @@ After grouping all the actions by player
 # Null Hypothesis
 As we attempting to see if better players actually get more playing time, our null hypothesis is:
 
-_Plus-Minus score will have no affect on playing time._
+_Plus-Minus score will have no effect on playing time._
 
 As Plus-Minus is our way of ranking players, our null hypothesis states that rankings will not help predict how much playing time someone gets.
 
