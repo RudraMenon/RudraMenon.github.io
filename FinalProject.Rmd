@@ -9,17 +9,11 @@ library(dplyr)
 ```{r part 1, RESULTS=HIDE}
 stats <- read_csv("SpaceBastards-stats.csv")
 
-stats %>%
+stats <- stats %>%
   select("Date/Time", tournament = "Tournamemnt", opponent = "Opponent", time = "Point Elapsed Seconds", "Line", 
          ourscore = "Our Score - End of Point", theirscore = "Their Score - End of Point", "Event Type", 
-         "Action", "Passer", rec = "Receiver", "Defender") %>%
-  group_by(tournament) %>%
-  count(rec)
+         "Action", "Passer", rec = "Receiver", "Defender")
 
-  
-  
-  
-# Go through each point, count the number of touches, determine if we scored or not.
-
+stats
 
 ```
