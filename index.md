@@ -39,7 +39,7 @@ After grouping all the actions by player
 
 ### Hypothesis Testing and Machine Learning
 
-## Null Hypothesis
+# Null Hypothesis
 As we attempting to see if better players actually get more playing time, our null hypothesis is:
 
 _Plus-Minus score will have no affect on playing time._
