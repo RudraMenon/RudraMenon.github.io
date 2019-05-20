@@ -11,7 +11,7 @@ For many, data science may seem only important or applicable to large companies,
 ### The Question
 
 In our experiment, we asked:
-  _"Do better players actually get more playing time?"_
+_"Do better players actually get more playing time?"_
 While someone may seem to be very skilled in practice, therefore gaining them playing time during tournaments, stats show us if it translates onto the field come game time.  It would be unfortunate if unrecognized, good players were overlooked or if overstated players were relied on too heavily, taking up playing time when they should be benched or developed more.  Specifically, we focused on player performance while on offense.  Through this analysis, we aimed to determine the relationship between offensive stats and playing time.
 
 ### Data Curation
@@ -20,7 +20,7 @@ Retrieving this data was simple.  The team has been personally building this dat
 
 Here are some terms concerning our dataset that you should know going forward:
  - Action: any drop, stall, turn, assist or goal
- - Playing time: how many points a player participated in during the season.  This is not a measure of time (like minutes or hours) a player spent on the field, but rather how many times he was one of the seven people put on the line at the beginnning of a point.  If you're unfamiliar with the gameflow of an ultimate frisbee game, [click here](https://www.youtube.com/watch?v=YkMMqOUNyKk) to learn more.
+ - Playing time: how many points a player participated in during the season.  This is not a measure of time (like minutes or hours) a player spent on the field, but rather how many times he was one of the seven people put on the line at the beginnning of a point.  If you're unfamiliar with the game flow of an ultimate frisbee game, [click here](https://www.youtube.com/watch?v=YkMMqOUNyKk) to learn more.
  - 
 
 ### Parsing and Data Management
