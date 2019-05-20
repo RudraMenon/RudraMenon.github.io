@@ -32,21 +32,23 @@ The biggest portion of this step was dedicated to calculating the Plus-Minus val
 
 After grouping all the actions by player
 ```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
 ```
+
+### Exploratory Data Analysis
+
+### Hypothesis Testing and Machine Learning
+
+## Null Hypothesis
+As we attempting to see if better players actually get more playing time, our null hypothesis is:
+
+_Plus-Minus score will have no affect on playing time._
+
+As Plus-Minus is our way of ranking players, our null hypothesis states that rankings will not help predict how much playing time someone gets.
+
+### Conclusion
+Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  Yet, by not making completions (successfully catching the disc as receiver) a component of the Plus-Minus score, we made it more difficult for players that are on the field a lot to abuse this.  By only counting goals and assists--game-making plays--it forces out which players on the team contribute in the most important way to the offense.
+
+
  
 
