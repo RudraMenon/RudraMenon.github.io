@@ -40,30 +40,21 @@ totalpass <- function(data) {
   )
 }
 
-totalrec <- function(data) {
-  sum <- 0
-         ifelse(data[2] == "Goal", sum <- sum + as.numeric(data[3]),
-              ifelse(data[2] == "Throwaway", sum <- sum - as.numeric(data[3]),
-                     ifelse(data[2] == "Stall", sum <- sum - as.numeric(data[3]),
-                            ifelse(data[2] == "Callahan", sum <- sum - as.numeric(data[3]), sum
-                            )
-                     )
-              )
-         )
-         
-                                  
-  sum
-}  
-
 rows <- dim(plusminus)[1]; plusminus <- plusminus[1:(rows - 6),] #Remove last 6 entries, not useful
+plusminus
+```
 
+```{r part 3}
 plusminuscol <- plusminus %>% #Create a vector using the total function that makes unfavorable things like drops/throwaways/etc become negative
   group_by(Passer) %>%
   apply(1, totalpass)
 
 plusminuspassing <- aggregate(plusminuscol, by = list(Passer = plusminus$Passer), FUN=sum) #New column by summing throwing +/- for each player
-colnames(plusminuspassing)[2] <- "x" #Rename
+colnames(plusminuspassing)[2] <- "PassingPlusMinus" #Rename
 
+plusminuspassing
+```
+```{r part 4}
 plusminus <- stats %>%
   select(Action, rec) %>%
   group_by(rec) %>%
@@ -74,16 +65,22 @@ colnames(plusminusgoals)[1] <- "Passer"
 
 plusminusrec <- merge(plusminusgoals, plusminuspassing, by="Passer"); plusminusrec$Action <- NULL #Remove action col
 
+plusminusrec
+
+
 plusminusrec <- plusminusrec %>%
-  mutate("+ / -" = (plusminusrec$n + plusminusrec$x))
+  mutate("+ / -" = (plusminusrec$n + plusminusrec$PassingPlusMinus))
 
-plusminusrec$n <- NULL; plusminusrec$x <- NULL;
-
+plusminusrec$n <- NULL; plusminusrec$PassingPlusMinus <- NULL;
+plusminusrec
+```
+```{r part 5}
 points <- stats %>%
   group_by(tournament, opponent, time, Line, ourscore, theirscore, p0, p1, p2, p3, p4, p5, p6) %>%
   count()
-points 
 
-  
-
+#TEMPLATE FOR COUNTING POINTS
+points %>%
+  group_by(p0) %>%
+  count()
 ```
