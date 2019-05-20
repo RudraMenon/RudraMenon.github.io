@@ -3,12 +3,16 @@ library(magrittr)
 library(ggplot2)
 library(tidyverse)
 library(rvest)
+library(dplyr)
+
 ```
 
 ```{r part 1, RESULTS=HIDE}
-stats <- read_csv("stats.csv")
+stats <- read_csv("SpaceBastards-stats.csv")
 
 stats %>%
-  select("Date/Time", "Tournamemnt", "Opponent", "Point Elapsed Seconds", "Line", "Our Score - End of Point", "Their Score - End of Point",
-         "Event Type", "Action", "Passer", "Receiver", "Defender")
+  select("Date/Time", tournament = "Tournamemnt", opp = "Opponent", "Point Elapsed Seconds", "Line", our_score = "Our Score - End of Point", their_score = "Their Score - End of Point","Event Type", action= "Action", "Passer",rec= "Receiver", "Defender")   %>% 
+   count(rec)
+
+  
 ```
