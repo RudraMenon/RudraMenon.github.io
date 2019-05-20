@@ -1,3 +1,9 @@
+Catherine Heller
+Jeremy Hess
+Rudra Menon
+
+Final Project CMSC320 2019
+
 ```{r libraries, ECHO=FALSE}
 library(magrittr)
 library(ggplot2)
@@ -6,14 +12,78 @@ library(rvest)
 library(dplyr)
 ```
 
+
+
 ```{r part 1, RESULTS=HIDE}
 stats <- read_csv("SpaceBastards-stats.csv")
 
 stats <- stats %>%
   select("Date/Time", tournament = "Tournamemnt", opponent = "Opponent", time = "Point Elapsed Seconds", "Line", 
          ourscore = "Our Score - End of Point", theirscore = "Their Score - End of Point", "Event Type", 
-         "Action", "Passer", rec = "Receiver", "Defender")
+         "Action", "Passer", rec = "Receiver", "Defender", p0 = "Player 0", p1 = "Player 1", p2 = "Player 2", p3 = "Player 3", p4 = "Player 4",
+         p5 = "Player 5", p6 = "Player 6")
 
 stats
+
+
+```
+
+```{r part 2}
+plusminus <- stats %>%
+  select(Action, Passer) %>%
+  group_by(Passer) %>%
+  count(Action)
+
+totalpass <- function(data) {
+  ifelse(data[2] == "Throwaway" || data[2] == "Drop" || data[2] == "Stall" || data[2] == "Callahan", data[3] <- as.numeric(data[3]) * -1, 
+         ifelse(data[2] == "Goal", as.numeric(data[3]), 0)
+  )
+}
+
+totalrec <- function(data) {
+  sum <- 0
+         ifelse(data[2] == "Goal", sum <- sum + as.numeric(data[3]),
+              ifelse(data[2] == "Throwaway", sum <- sum - as.numeric(data[3]),
+                     ifelse(data[2] == "Stall", sum <- sum - as.numeric(data[3]),
+                            ifelse(data[2] == "Callahan", sum <- sum - as.numeric(data[3]), sum
+                            )
+                     )
+              )
+         )
+         
+                                  
+  sum
+}  
+
+rows <- dim(plusminus)[1]; plusminus <- plusminus[1:(rows - 6),] #Remove last 6 entries, not useful
+
+plusminuscol <- plusminus %>% #Create a vector using the total function that makes unfavorable things like drops/throwaways/etc become negative
+  group_by(Passer) %>%
+  apply(1, totalpass)
+
+plusminuspassing <- aggregate(plusminuscol, by = list(Passer = plusminus$Passer), FUN=sum) #New column by summing throwing +/- for each player
+colnames(plusminuspassing)[2] <- "x" #Rename
+
+plusminus <- stats %>%
+  select(Action, rec) %>%
+  group_by(rec) %>%
+  count(Action)
+
+plusminusgoals <- plusminus[plusminus$Action == "Goal",]
+colnames(plusminusgoals)[1] <- "Passer"
+
+plusminusrec <- merge(plusminusgoals, plusminuspassing, by="Passer"); plusminusrec$Action <- NULL #Remove action col
+
+plusminusrec <- plusminusrec %>%
+  mutate("+ / -" = (plusminusrec$n + plusminusrec$x))
+
+plusminusrec$n <- NULL; plusminusrec$x <- NULL;
+
+points <- stats %>%
+  group_by(tournament, opponent, time, Line, ourscore, theirscore, p0, p1, p2, p3, p4, p5, p6) %>%
+  count()
+points 
+
+  
 
 ```
