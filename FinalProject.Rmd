@@ -57,7 +57,10 @@ plusminus %>% select(Player, plus_minus)
   
 ```
 ```{r part 3}
-plusminus %>% select(Player, "Catch", "Goal", "Throwaway", "Stall")
+passing<- plusminus %>% select(Player, Completions= "Catch", Assists="Goal", "Throwaway", "Stall")
+passing$pass_perc <- (passing$Completions + passing$Assists)/ (passing$Completions + passing$Assists + passing$Throwaway + passing$Stall) * 100
+passing
+
   
 ```
 
@@ -84,11 +87,37 @@ final_df <- final_df%>%
   group_by(Player) %>%
   summarise_all(funs(first(na.omit(.)))) %>%
   select(Player, plus_minus, points_played)
-final_df
+final_df$per_point <- final_df$points_played / final_df$plus_minus
 ```
 
-``` {r plot}
+``` {r plot points_played to perpoint}
+plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
+  geom_point()+ 
+  geom_smooth(method=lm) 
+
+
+ggplotly(plot, tooltip = c("Player", "per_point","points_played"))
+
+```
+
+``` {r plot points_played to plusminus}
 plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
+  geom_point()+ 
+  geom_smooth(method=lm) 
+
+
+ggplotly(plot, tooltip = c("Player", "plus_minus","points_played"))
+
+```
+``` {r plot points_played to passing_perc}
+pass_perc <- passing
+pass_perc$points_played <- points_played$Freq
+pass_perc <- pass_perc%>%
+  summarise_all(funs(first(na.omit(.)))) %>%
+  select(Player, pass_perc, points_played)
+pass_perc
+
+plot <- pass_perc %>% ggplot(mapping = aes(label=Player, x=pass_perc, y=points_played)) +
   geom_point()+ 
   geom_smooth(method=lm) 
 
