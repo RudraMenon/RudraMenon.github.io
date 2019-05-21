@@ -23,7 +23,7 @@ Retrieving this data was simple.  The team has been personally building this dat
 Here are some terms concerning our dataset that you should know going forward:
  - Action: any drop, stall, turn, assist or goal
  - Playing time: how many points a player participated in during the season.  This is not a measure of time (like minutes or hours) a player spent on the field, but rather how many times he was one of the seven people put on the line at the beginnning of a point.  If you're unfamiliar with the game flow of an ultimate frisbee game, [click here](https://www.youtube.com/watch?v=YkMMqOUNyKk) to learn more.
- - 
+ 
  ```markdown
  {r part 1, RESULTS=HIDE}
 stats <- read_csv("SpaceBastards-stats.csv")
