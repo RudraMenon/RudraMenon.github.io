@@ -1,6 +1,9 @@
 ## Space Bastards: An Overview of Men's Club Ultimate, Spring 2019
 
-[Download Team Stats for the Spring 2019 Season](SpaceBastards-stats.csv)
+[Download CSV Team Stats for the Spring 2019 Season](SpaceBastards-stats.csv)
+
+[Download Excel viewable Team Stats](SpaceBastards-stats.xlsx)
+
 [Download R Markdown code for the experiment](FinalProject.Rmd)
 
 # Introduction
