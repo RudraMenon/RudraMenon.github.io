@@ -190,7 +190,7 @@ p_value
 
 ### Conclusion
 
-Our p value is .8, which is greater than .05, and shows that the scenario of the null hypothesis and sample meamn given would likely occur about 80% of the time.  Therefore, we cannot reject our null hypothesis.
+Our p value is .8, which is greater than .05, and shows that the scenario of the null hypothesis and sample mean given would likely occur about 80% of the time.  Therefore, we cannot reject our null hypothesis.
 
 
 # Final Takeaways 
