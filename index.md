@@ -78,7 +78,7 @@ points <- stats %>%
   select(tournament, opponent, ourscore, theirscore, p0, p1, p2, p3, p4, p5, p6) %>%
   group_by(tournament, opponent, ourscore, theirscore, p0, p1, p2, p3, p4, p5 ,p6) %>%
   count()
-#TEMPLATE FOR COUNTING POINTS
+
 points <-points %>% 
   ungroup() %>% 
   select(p0, p1, p2, p3, p4, p5 ,p6)
