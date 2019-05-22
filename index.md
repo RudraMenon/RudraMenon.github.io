@@ -23,100 +23,115 @@ Retrieving this data was simple.  The team has been personally building this dat
 Here are some terms concerning our dataset that you should know going forward:
  - Action: any drop, stall, turn, assist or goal
  - Playing time: how many points a player participated in during the season.  This is not a measure of time (like minutes or hours) a player spent on the field, but rather how many times he was one of the seven people put on the line at the beginnning of a point.  If you're unfamiliar with the game flow of an ultimate frisbee game, [click here](https://www.youtube.com/watch?v=YkMMqOUNyKk) to learn more.
+ - Passing percentage: how many throws a player successfully completed
+ - Line: the seven players who are on the field during a single point.  The line changes from one point to the next.
  
- ```markdown
+```markdown
  {r part 1, RESULTS=HIDE}
 stats <- read_csv("SpaceBastards-stats.csv")
 
 stats <- stats %>%
   select("Date/Time", tournament = "Tournamemnt", opponent = "Opponent", time = "Point Elapsed Seconds", "Line", 
-         ourscore = "Our Score - End of Point", theirscore = "Their Score - End of Point", "Event Type", 
-         "Action", "Passer", rec = "Receiver", "Defender", p0 = "Player 0", p1 = "Player 1", p2 = "Player 2", p3 = "Player 3", p4 = "Player 4",
+         ourscore = "Our Score - End of Point", theirscore = "Their Score - End of Point", "Event Type", "Action", 
+         "Passer", rec = "Receiver", "Defender", p0 = "Player 0", p1 = "Player 1", p2 = "Player 2", p3 = "Player 3", p4 = "Player 4",
          p5 = "Player 5", p6 = "Player 6")
 
 stats
 ```
 
 ### Parsing and Data Management
-Once we had it, we had to do a lot of cleaning and maniupulation to make the data usable, as it was not in the same format that it appeared in on the very user-friendly site.  Columns needed to be renamed.
+Once we had the data, we had to do a lot of cleaning and maniupulation to make the data usable, as it was not in the same format that it appeared in on the very user-friendly site.  Columns needed to be renamed.
 
 The biggest portion of this step was dedicated to calculating the Plus-Minus value for each player on the team, the means with which we were able to rank all the players from best to worst.  Plus-Minus is a mechanism that takes positive actions on the field and balances them against negative actions on the field.  A coach or captain can put into the system how many drops or turns a player was responsible for, as well as their goals and assists.  Drops, turns, and stalls each count as -1, while goals and assists count as +1.  All these actions are added together to create the player's Plus-Minus score.
 
-After grouping all the actions by player
 ```markdown
 {r part 2}
-plusminus <- stats %>%
-  select(Action, Passer) %>%
-  group_by(Passer) %>%
-  count(Action)
+plusminus <- stats
+plusminus$Player <- ifelse(is.na(plusminus$Passer), plusminus$Defender,
+                           ifelse(plusminus$Action == "Drop", plusminus$rec, plusminus$Passer))
 
-totalpass <- function(data) {
-  ifelse(data[2] == "Throwaway" || data[2] == "Drop" || data[2] == "Stall" || data[2] == "Callahan", data[3] <- as.numeric(data[3]) * -1, 
-         ifelse(data[2] == "Goal", as.numeric(data[3]), 0)
-  )
-}
-
-totalrec <- function(data) {
-  sum <- 0
-         ifelse(data[2] == "Goal", sum <- sum + as.numeric(data[3]),
-              ifelse(data[2] == "Throwaway", sum <- sum - as.numeric(data[3]),
-                     ifelse(data[2] == "Stall", sum <- sum - as.numeric(data[3]),
-                            ifelse(data[2] == "Callahan", sum <- sum - as.numeric(data[3]), sum
-                            )
-                     )
-              )
-         )
-         
-                                  
-  sum
-}  
+plusminus <- plusminus %>% rbind(plusminus %>%
+                                   filter(Action=="Goal") %>%
+                                   mutate(Action="Score", Player=rec))
+plusminus <- plusminus %>%
+  select(Player, Action, rec) %>%
+  group_by(Player) %>%
+  count(Action) %>%
+  select(Player, Action, n)
 
 rows <- dim(plusminus)[1]; plusminus <- plusminus[1:(rows - 6),] #Remove last 6 entries, not useful
+plusminus <- plusminus%>% 
+  group_by(Player) %>%
+  spread(key="Action",value=n) %>% 
+  filter(Player != "0" &  Player != "Anonymous")
+plusminus[is.na(plusminus)] <- 0
 
-plusminuscol <- plusminus %>% #Create a vector using the total function that makes unfavorable things like drops/throwaways/etc become negative
-  group_by(Passer) %>%
-  apply(1, totalpass)
+plusminus$plus_minus <- plusminus$Callahan + plusminus$D + plusminus$Goal+ plusminus$Score - plusminus$Stall - plusminus$Throwaway - plusminus$Drop
 
-plusminuspassing <- aggregate(plusminuscol, by = list(Passer = plusminus$Passer), FUN=sum) #New column by summing throwing +/- for each player
-colnames(plusminuspassing)[2] <- "x" #Rename
-
-plusminus <- stats %>%
-  select(Action, rec) %>%
-  group_by(rec) %>%
-  count(Action)
-
-plusminusgoals <- plusminus[plusminus$Action == "Goal",]
-colnames(plusminusgoals)[1] <- "Passer"
-
-plusminusrec <- merge(plusminusgoals, plusminuspassing, by="Passer"); plusminusrec$Action <- NULL #Remove action col
-
-plusminusrec <- plusminusrec %>%
-  mutate("+ / -" = (plusminusrec$n + plusminusrec$x))
-
-plusminusrec$n <- NULL; plusminusrec$x <- NULL;
+plusminus %>% select(Player, plus_minus)
 ```
 
-Playing time stuff
+Additionally, we needed to calculate how many points each player played.  In order to get these numbers for each person, we had to analyze each line, both offense and defense, for each game of the season.
+
 ```markdown
+library(slam)
 points <- stats %>%
-  group_by(tournament, opponent, time, Line, ourscore, theirscore, p0, p1, p2, p3, p4, p5, p6) %>%
+  select(tournament, opponent, ourscore, theirscore, p0, p1, p2, p3, p4, p5, p6) %>%
+  group_by(tournament, opponent, ourscore, theirscore, p0, p1, p2, p3, p4, p5 ,p6) %>%
   count()
-points 
+
+points <-points %>% 
+  ungroup() %>% 
+  select(p0, p1, p2, p3, p4, p5 ,p6)
+
+points_played <- as.data.frame(table(unlist(points)))
+points_played
+```
+After all this data management, we put all the values we needed into one table.
+```markdown
+final_df <- plusminus
+final_df$points_played <- points_played$Freq
+final_df <- final_df%>%
+  group_by(Player) %>%
+  summarise_all(funs(first(na.omit(.)))) %>%
+  select(Player, plus_minus, points_played)
+final_df$per_point <- final_df$points_played / final_df$plus_minus
 ```
 
 ### Exploratory Data Analysis
 
+```markdown
+plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
+  geom_point()+ 
+  geom_smooth(method=lm) 
+
+ggplotly(plot, tooltip = c("Player", "plus_minus","points_played"))
+```
+
+Our metric of the Plus-Minus could be misguiding in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  To combat this, we found the average amount of points a player accumulates each time he is on the field to create a fairer comparison. 
+
+```markdown
+plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
+  geom_point()+ 
+  geom_smooth(method=lm) 
+
+ggplotly(plot, tooltip = c("Player", "per_point","points_played"))
+```
+
 ### Hypothesis Testing and Machine Learning
 
 # Null Hypothesis
-As we attempting to see if better players actually get more playing time, our null hypothesis is:
+As we attempting to see if better players actually get more playing time, we want to know if at least half of the players are within fifty points of what our regression line determines their optimum points played to be.
+Therefore, our null hypothesis is:
 
-_Plus-Minus score will have no effect on playing time._
+_50% of players or more do not play the amount of points that they should, plus or minus fifty points._
 
-As Plus-Minus is our way of ranking players, our null hypothesis states that rankings will not help predict how much playing time someone gets.
+We set our p value to .5.
+
 
 ### Conclusion
-Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  Yet, by not making completions (successfully catching the disc as receiver) a component of the Plus-Minus score, we made it more difficult for players that are on the field a lot to abuse this.  By only counting goals and assists--game-making plays--it forces out which players on the team contribute in the most important way to the offense.
+
+
 
 
  
