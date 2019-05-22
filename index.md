@@ -169,4 +169,3 @@ Our p value is .8, which is greater than .05.  Therefore, we cannot reject our n
 
 The numbers can't lie.  Unfortunately for the Space Bastards, they are overusing and underusing players in all the wrong ways.  With this data, the coaches of their team can adjust their subbing patterns so talent isn't so wasted.  
  
-
