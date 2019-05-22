@@ -154,6 +154,14 @@ Overall, it seems that the data that we visualized here seems to align with our 
 
 In looking at the visual representations of the stats's relationships, we found one to be the most compelling and interesting indicator of good strategy: Points Played vs. Per Point.  This graph, unlike Points Played vs. Plus Minus, takes into account a major fault of the plus-minus system.  Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  We decided to take a closer look at this relationship, the blue line indicating how many points each player should be playing.  In our hypothesis testing, we aimed to determine if there is statistical proof as to whether or not 
 
+```markdown
+{r get prediction}
+plot1$prediction <- predict(loess(points_played~per_point,plot1), plot1$per_point)
+plot1$diff<- abs(plot1$prediction - plot1$points_played)
+plot1$hyp <- plot1$diff < 50
+
+plot1
+```
 ### Null Hypothesis
 We want to prove that more than 50% of player on the team get the appropriate amount, as predicted by our analysis in the previous step, within fifty points.  Therefore, our null hypothesis is:
 
@@ -161,6 +169,17 @@ _50% of players or more will not get to play the right amount of points, within 
 
 ### Calucations
 
+```markdown
+n <- 31
+pa <- 0.5 
+ex <- pa
+var_x <- pa * ( 1 - pa) / n
+mean <- length(plot1$hyp[plot1$hyp==TRUE])/n
+
+std <- (sqrt(var_x))
+p_value <- 1-pnorm(mean,ex,std)
+p_value
+```
 
 ### Conclusion
 
