@@ -189,7 +189,7 @@ plot1
 ![plot1](plot1.png)
 
 ### Null Hypothesis
-We want to prove that more than 50% of player on the team get the appropriate amount, as predicted by our Exploratory Data Analysis, within fifty points.  Therefore, our null hypothesis is:
+We want to prove that more than 50% of player on the team get the appropriate amount, as predicted by our Exploratory Data Analysis, within fifty points (diff is less than 50 for the majority of players).  Therefore, our null hypothesis is:
 
 _50% of players or more will not get to play the right amount of points, within fifty points, based on their per_point score._
 
