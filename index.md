@@ -33,7 +33,7 @@ Here are some terms concerning our dataset that you should know going forward:
  - Action: any drop, stall, turn, assist or goal
  - Playing time: how many points a player participated in during the season.  This is not a measure of time (like minutes or hours) a player spent on the field, but rather how many times he was one of the seven people put on the line at the beginnning of a point.  If you're unfamiliar with the game flow of an ultimate frisbee game, [click here](https://www.youtube.com/watch?v=YkMMqOUNyKk) to learn more.
  - Passing percentage: how many throws a player successfully completed
- - Line: the seven players who are on the field during a single point.  The line changes from one point to the next.
+ - Line: the seven players who are on the field for the Space Bastards during a single point.  The line changes from one point to the next.
  
 ```markdown
  {r part 1, RESULTS=HIDE}
@@ -186,6 +186,8 @@ plot1$hyp <- plot1$diff < 50
 
 plot1
 ```
+![plot1](plot1.png)
+
 ### Null Hypothesis
 We want to prove that more than 50% of player on the team get the appropriate amount, as predicted by our Exploratory Data Analysis, within fifty points.  Therefore, our null hypothesis is:
 
@@ -210,7 +212,7 @@ p_value
 
 ### Conclusion
 
-Our p value is .8, which is greater than .05, and shows that the scenario of the null hypothesis and sample mean given would likely occur about 80% of the time.  Therefore, we cannot reject our null hypothesis.
+After running this code with our equations and calculations, our p value is .8, which was greater than .05, and showed that the scenario of the null hypothesis and sample mean given would likely occur about 80% of the time.  Therefore, we could not reject our null hypothesis.
 
 
 # Final Takeaways 
