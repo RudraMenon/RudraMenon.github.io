@@ -151,7 +151,7 @@ Overall, it seems that the data that we visualized here seems to align with our 
 ### Hypothesis Testing and Machine Learning
 
 # Null Hypothesis
-As we attempting to see if better players actually get more playing time, our null hypothesis is:
+As we are attempting to see if better players actually get more playing time, our null hypothesis is:
 
 _Plus-Minus score will have no effect on playing time._
 
