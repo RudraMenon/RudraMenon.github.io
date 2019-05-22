@@ -99,7 +99,9 @@ final_df$per_point <- final_df$points_played / final_df$plus_minus
 
 ### Exploratory Data Analysis
 
-In our exploratory data analysis, we visualize three plots. First, we analyze the per-points averages of players against their actual playing time. We create a trend on this plot that determines how much each player should play based on their performance per-point. This plot will also show if the plus minus system of evaluating skill correctly determines playing time.
+In our exploratory data analysis, we visualize three plots using scatter plots with a trend. 
+
+First, we analyze the per-points averages of players against their actual playing time. We create a trend on this plot that determines how much each player should play based on their performance per-point. This plot will also show if the plus minus system of evaluating skill correctly determines playing time.
 
 ```markdown
 plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
@@ -125,7 +127,7 @@ ggplotly(plot, tooltip = c("Player", "plus_minus","points_played"))
 
 ![Plus minus vs points played](pp.png)
 
-Last, we create a plot to visualize passing percentage vs points played. This is an interesting plot because it seems to show a very clear trend where players who have a low passing percentage do not play nearly as much as those with higher passing percentages. The trend is exaggerated by the fact that there are no outliers in terms of this principle. All 4 of the lowest passing percentage individuals fall below the trend on this plot. 
+Last, we create a plot to visualize passing percentage vs points played. This is an interesting plot because it seems to show a very clear trend where players who have a low passing percentage do not play nearly as much as those with higher passing percentages. The trend is exaggerated by the fact that there are no outliers in terms of this principle. All 4 of the lowest passing percentage individuals fall below the trend on this plot. Some of the 100% passing percentage individuals are not values that should be considered, since they only throw a few passes over the course of the season, unlike others who throw many hundreds.
 
 ```markdown
 pass_perc <- passing
@@ -142,6 +144,7 @@ plot <- pass_perc %>% ggplot(mapping = aes(label=Player, x=pass_perc, y=points_p
 
 ggplotly(plot, tooltip = c("Player"))
 ```
+Overall, it seems that the data that we visualized here seems to align with our prediction that higher passing percentage and plus-minus individuals tend to see more playing time on the field.
 
 ![Passing percentage vs points played](image.png)
 
