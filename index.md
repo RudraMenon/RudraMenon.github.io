@@ -1,5 +1,7 @@
 ## Space Bastards: An Overview of Men's Club Ultimate, Spring 2019
 
+[Download Team Stats for the Spring 2019 Season](SpaceBastards-stats.csv)
+[Download R Markdown code for the experiment](FinalProject.Rmd)
 
 # Introduction
 Frisbee has become a staple, if not a cliche, of the college experience.  For most, it’s just throwing a disc around on campus green spaces.  For others, it is a sport that hours of hardwork, dedication, sweat, and tears are poured into over four years, maybe even five.  Club Ultimate Frisbee takes the casual games and tossing that pop up sporadically to the next level.  Practicing up to eight hours a week, spending time outside of practice working out at the gym or getting in reps with a disc, traveling hundreds of miles away to compete against other schools all are essential parts of the club ultimate experience at the University of Maryland.  
