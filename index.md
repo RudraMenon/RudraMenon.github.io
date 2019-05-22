@@ -123,7 +123,7 @@ plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_p
 ggplotly(plot, tooltip = c("Player", "plus_minus","points_played"))
 ```
 
-![Plus minus vs points played](points_played over plus_minus.png)
+![Plus minus vs points played]("points_played over plus_minus.png")
 
 Last, we create a plot to visualize passing percentage vs points played. This is an interesting plot because it seems to show a very clear trend where players who have a low passing percentage do not play nearly as much as those with higher passing percentages. The trend is exaggerated by the fact that there are no outliers in terms of this principle. All 4 of the lowest passing percentage individuals fall below the trend on this plot. 
 
