@@ -1,5 +1,6 @@
 ## Space Bastards: An Overview of Men's Club Ultimate, Spring 2019
 
+
 # Introduction
 Frisbee has become a staple, if not a cliche, of the college experience.  For most, it’s just throwing a disc around on campus green spaces.  For others, it is a sport that hours of hardwork, dedication, sweat, and tears are poured into over four years, maybe even five.  Club Ultimate Frisbee takes the casual games and tossing that pop up sporadically to the next level.  Practicing up to eight hours a week, spending time outside of practice working out at the gym or getting in reps with a disc, traveling hundreds of miles away to compete against other schools all are essential parts of the club ultimate experience at the University of Maryland.  
 
@@ -40,7 +41,7 @@ stats
 ```
 
 # Parsing and Data Management
-Once we had the data, we had to do a lot of cleaning and maniupulation to make the data usable, as it was not in the same format that it appeared in on the very user-friendly site.  Columns needed to be renamed.
+Once we had the data, we had to do a lot of cleaning and maniupulation to make the data usable, as it was not in the same format that it appeared in on the very user-friendly site.  We also had to make some new fields of our own.
 
 The biggest portion of this step was dedicated to calculating the Plus-Minus value for each player on the team, the means with which we were able to rank all the players from best to worst.  Plus-Minus is a mechanism that takes positive actions on the field and balances them against negative actions on the field.  A coach or captain can put into the system how many drops or turns a player was responsible for, as well as their goals and assists.  Drops, turns, and stalls each count as -1, while goals and assists count as +1.  All these actions are added together to create the player's Plus-Minus score.
 
@@ -103,20 +104,7 @@ final_df$per_point <- final_df$points_played / final_df$plus_minus
 
 In our exploratory data analysis, we visualized three plots using scatter plots with a trend. 
 
-First, we analyzed the per-points averages of players against their actual playing time. We create a trend on this plot that determines how much each player should play based on their performance per-point. This plot will also show if the plus minus system of evaluating skill correctly determines playing time.
-
-```markdown
-plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
-  geom_point()+ 
-  geom_smooth(method=lm) 
-
-
-ggplotly(plot, tooltip = c("Player", "per_point","points_played"))
-```
-
-![Per-point vs points played](newplot.png)
-
-Second, we create a plot for plus-minus versus points played. This is a a very direct correlation between playing time and plus-minus performance. From this, we can see if the players with higher or lower plus minuses are getting (or not getting) playing time accordingly. Interestingly enough, the highest plus-minus individual on the team falls below the trend for plus-minus to points played, whereas the second-highest individual lands way above the trend.
+First, we create a plot for plus-minus versus points played. This is a a very direct correlation between playing time and plus-minus performance. From this, we can see if the players with higher or lower plus minuses are getting (or not getting) playing time accordingly. Interestingly enough, the highest plus-minus individual on the team falls below the trend for plus-minus to points played, whereas the second-highest individual lands way above the trend.
 
 ```markdown
 plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
@@ -129,7 +117,21 @@ ggplotly(plot, tooltip = c("Player", "plus_minus","points_played"))
 
 ![Plus minus vs points played](pp.png)
 
-Last, we create a plot to visualize passing percentage vs points played. This is an interesting plot because it seems to show a very clear trend where players who have a low passing percentage do not play nearly as much as those with higher passing percentages. The trend is exaggerated by the fact that there are no outliers in terms of this principle. All 4 of the lowest passing percentage individuals fall below the trend on this plot. Some of the 100% passing percentage individuals are not values that should be considered, since they only throw a few passes over the course of the season, unlike others who throw many hundreds.
+Second, we analyzed the per-points averages of players against their actual playing time. With the per-point average, we calculated for each player how many plus-minus points they generated, on average, each time they were on the field.  We created a trend on this plot that determines how much each player should play based on their performance per-point. This plot showed us if the plus minus system of evaluating skill correctly determines playing time in a different, more nuanced evaulation.  The correlation here was weaker than when we compared points played to the raw plus-minus score.
+
+```markdown
+plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
+  geom_point()+ 
+  geom_smooth(method=lm) 
+
+
+ggplotly(plot, tooltip = c("Player", "per_point","points_played"))
+```
+
+![Per-point vs points played](newplot.png)
+
+
+Last, we created a plot to visualize passing percentage vs points played. This is an interesting plot because it seems to show a very clear trend where players who have a low passing percentage do not play nearly as much as those with higher passing percentages. The trend is exaggerated by the fact that there are no outliers in terms of this principle. All 4 of the lowest passing percentage individuals fall below the trend on this plot. Some of the 100% passing percentage individuals are not values that should be considered, since they only throw a few passes over the course of the season, unlike others who throw many hundreds.
 
 ```markdown
 pass_perc <- passing
@@ -148,11 +150,13 @@ ggplotly(plot, tooltip = c("Player"))
 ```
 ![Passing percentage vs points played](image.png)
 
-Overall, it seems that the data that we visualized here seems to align with our prediction that higher passing percentage and plus-minus individuals tend to see more playing time on the field.
+Overall, it seems that the data that we visualized here seems to align with our prediction that better players, measured by either, plus-minus score or even passing percentage, tend to see more playing time on the field.
 
 # Hypothesis Testing and Machine Learning
 
-In looking at the visual representations of the stats's relationships, we found one to be the most compelling and interesting indicator of good strategy: Points Played vs. Per Point.  This graph, unlike Points Played vs. Plus Minus, takes into account a major fault of the plus-minus system.  Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  We decided to take a closer look at this relationship, the blue line indicating how many points each player should be playing.  In our hypothesis testing, we aimed to determine if there is statistical proof as to whether or not 
+In looking at the visual representations of the stats's relationships, we found one to be the most compelling and interesting indicator of good strategy: Points Played vs. Per Point.  While the correlation wasn't as as direct or high, logically this relationship held the most significance to our overall experiment.  This graph, unlike Points Played vs. Plus Minus, takes into account a major fault of the plus-minus system.  Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  We decided to take a closer look at this relationship, the blue line in the graph indicating how many points each player should be playing.  In our hypothesis testing, we aimed to determine if there is statistical proof as to whether or not the team is using each player as they should, i.e. how close their playing time is to that blue line.
+
+To do this testing, we created a new plot from our data to include the predicted number of points each player should play based on the trend we previously observed ("prediction") and the difference between the predicted number of points played versus the actual number of points played ("diff").  In our testing, we hoped to see "diff" for the majority of players be less than 50.
 
 ```markdown
 {r get prediction}
@@ -163,12 +167,15 @@ plot1$hyp <- plot1$diff < 50
 plot1
 ```
 ### Null Hypothesis
-We want to prove that more than 50% of player on the team get the appropriate amount, as predicted by our analysis in the previous step, within fifty points.  Therefore, our null hypothesis is:
+We want to prove that more than 50% of player on the team get the appropriate amount, as predicted by our Exploratory Data Analysis, within fifty points.  Therefore, our null hypothesis is:
 
 _50% of players or more will not get to play the right amount of points, within fifty points, based on their per_point score._
 
 ### Calucations
 
+We then set forth calculating our variables for testing.  If you are unfamiliar with hypothesis testing and would like to learn more, [click here](https://opentextbc.ca/researchmethods/chapter/understanding-null-hypothesis-testing/).  Essentially, we will be measuring the likelihood that, across our data, our prediction with the sample result (the mean of the data) will hold true.  The smaller the p value, the less likely that the relationship perported by the null hypothesis is to exist.  This means we are more likely we are to have presumed correctly in the objective of our experiment and can reject the null hypothesis (which states the opposite of what we are hoping to prove). 
+In our calcuations, N is equal to the number of players on the team, 31.  Our pa value is .5, representing the percentage of the data we are expecting to meet the qualification.  Our expected value is also .5, equal to the pa.  We are hoping the data 
+generates a p value that is less than .05, indicating that the likelihood of null hypothesis is less than 5%.
 ```markdown
 n <- 31
 pa <- 0.5 
@@ -183,10 +190,10 @@ p_value
 
 ### Conclusion
 
-Our p value is .8, which is greater than .05.  Therefore, we cannot reject our null hypothesis.
+Our p value is .8, which is greater than .05, and shows that the scenario of the null hypothesis and sample meamn given would likely occur about 80% of the time.  Therefore, we cannot reject our null hypothesis.
 
 
 # Final Takeaways 
 
-The numbers can't lie.  Unfortunately for the Space Bastards, they are overusing and underusing players in all the wrong ways.  With this data, the coaches of their team can adjust their subbing patterns so talent isn't so wasted.  
+The numbers can't lie.  Unfortunately for the Space Bastards, they are overusing and underusing players in all the wrong ways.  The weaker realationship between played points and per point, versus that of played points and plus-minus, began to hint at this in our Exploratory Data Analysis when the players were put on an even playing field, metaphorically here, and the slope of the line dropped significantly.  On the plus side, this shows that there is a lot of hidden talent within the team.  Furthermore, players that may appear to be good but are having trouble translating their skills during games can now be identified and given the coaching, attention, and practice that they may need.  With this data, the coaches of their team can adjust their subbing patterns so talent isn't so wasted and maybe even create new strategies and plays to optimally use the abilities of the team in a game.  In many sports, win/loss records can be analyzed to determine if strategy changes translate into a tangible number of wins during a season.  Going forward, we would be interested to see if, after the conclusions of this study, the Space Bastards changed their strategy and how it quantifiably changes the way they play--and win--the game.
  
