@@ -36,7 +36,7 @@ Here are some terms concerning our dataset that you should know going forward:
  - Line: the seven players who are on the field for the Space Bastards during a single point.  The line changes from one point to the next.
  
 ```markdown
- {r part 1, RESULTS=HIDE}
+ {r part 1}
 stats <- read_csv("SpaceBastards-stats.csv")
 
 stats <- stats %>%
