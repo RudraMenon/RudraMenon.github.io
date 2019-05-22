@@ -119,6 +119,7 @@ final_df <- final_df%>%
   select(Player, plus_minus, points_played)
 final_df$per_point <- final_df$points_played / final_df$plus_minus
 ```
+![final database](finaldf.png)
 
 # Exploratory Data Analysis
 
