@@ -102,9 +102,9 @@ final_df$per_point <- final_df$points_played / final_df$plus_minus
 
 # Exploratory Data Analysis
 
-In our exploratory data analysis, we visualized three plots using scatter plots with a trend. 
+[Exploratory Data Analysis](https://insidebigdata.com/2014/11/09/ask-data-scientist-importance-exploratory-data-analysis/) is a great tool for stepping beyond our assumptions about the data and into the numbers and trends themselves.  In this step of our experiment, we aimed to get a better idea of how the player's stats actually related to each other quantifiably. In our exploratory data analysis, we visualized three plots using scatter plots with a trend, comparing points played to three different measures: the plus-minus score, plus-minus score average per point, and passing percentage. 
 
-First, we create a plot for plus-minus versus points played. This is a a very direct correlation between playing time and plus-minus performance. From this, we can see if the players with higher or lower plus minuses are getting (or not getting) playing time accordingly. Interestingly enough, the highest plus-minus individual on the team falls below the trend for plus-minus to points played, whereas the second-highest individual lands way above the trend.
+First, we created a plot for plus-minus versus points played. This is a very direct correlation between playing time and plus-minus performance. From this, we could see if the players with higher or lower plus minuses are getting (or not getting) playing time accordingly. Interestingly enough, the highest plus-minus individual on the team falls below the trend for plus-minus to points played, whereas the second-highest individual lands way above the trend.
 
 ```markdown
 plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
@@ -130,7 +130,6 @@ ggplotly(plot, tooltip = c("Player", "per_point","points_played"))
 
 ![Per-point vs points played](newplot.png)
 
-
 Last, we created a plot to visualize passing percentage vs points played. This is an interesting plot because it seems to show a very clear trend where players who have a low passing percentage do not play nearly as much as those with higher passing percentages. The trend is exaggerated by the fact that there are no outliers in terms of this principle. All 4 of the lowest passing percentage individuals fall below the trend on this plot. Some of the 100% passing percentage individuals are not values that should be considered, since they only throw a few passes over the course of the season, unlike others who throw many hundreds.
 
 ```markdown
@@ -150,7 +149,7 @@ ggplotly(plot, tooltip = c("Player"))
 ```
 ![Passing percentage vs points played](image.png)
 
-Overall, it seems that the data that we visualized here seems to align with our prediction that better players, measured by either, plus-minus score or even passing percentage, tend to see more playing time on the field.
+Overall, it seems that the data that we visualized here is generally aligning with our prediction that better players, measured by either plus-minus score or even passing percentage, tend to see more playing time on the field.
 
 # Hypothesis Testing and Machine Learning
 
@@ -195,5 +194,5 @@ Our p value is .8, which is greater than .05, and shows that the scenario of the
 
 # Final Takeaways 
 
-The numbers can't lie.  Unfortunately for the Space Bastards, they are overusing and underusing players in all the wrong ways.  The weaker realationship between played points and per point, versus that of played points and plus-minus, began to hint at this in our Exploratory Data Analysis when the players were put on an even playing field, metaphorically here, and the slope of the line dropped significantly.  On the plus side, this shows that there is a lot of hidden talent within the team.  Furthermore, players that may appear to be good but are having trouble translating their skills during games can now be identified and given the coaching, attention, and practice that they may need.  With this data, the coaches of their team can adjust their subbing patterns so talent isn't so wasted and maybe even create new strategies and plays to optimally use the abilities of the team in a game.  In many sports, win/loss records can be analyzed to determine if strategy changes translate into a tangible number of wins during a season.  Going forward, we would be interested to see if, after the conclusions of this study, the Space Bastards changed their strategy and how it quantifiably changes the way they play--and win--the game.
+The numbers can't lie.  Unfortunately for the Space Bastards, they are overusing and underusing players in all the wrong ways.  The weaker realationship between played points and per point, versus that of played points and plus-minus, began to hint at this in our Exploratory Data Analysis when the players were put on an even playing field, metaphorically here, and the slope of the line dropped significantly.  Just because we saw a possitive correlation in our visualization doesn't mean that the trend is well-applied to the data as a whole.  On the plus side, this shows that there is a lot of hidden talent within the team.  Furthermore, players that may appear to be good but are having trouble translating their skills during games can now be identified and given the coaching, attention, and practice that they may need.  With this data, the coaches of their team can adjust their subbing patterns so talent isn't so wasted and maybe even create new strategies and plays to optimally use the abilities of the team in a game.  In many sports, win/loss records can be analyzed to determine if strategy changes translate into a tangible number of wins during a season.  Going forward, we would be interested to see if, after the conclusions of this study, the Space Bastards changed their strategy and how it quantifiably changes the way they play--and win--the game.
 ![Space Bastards Team Photo](D5TDkqMX4AAulYA.jpg-large.jpeg)
