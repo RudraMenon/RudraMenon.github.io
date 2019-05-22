@@ -47,6 +47,7 @@ stats <- stats %>%
 
 stats
 ```
+![the stats](ogdata.png)
 
 # Parsing and Data Management
 Once we had the data, we had to do a lot of cleaning and maniupulation to make the data usable, as it was not in the same format that it appeared in on the very user-friendly site.  We also had to make some new fields of our own.
@@ -97,6 +98,17 @@ points <-points %>%
 points_played <- as.data.frame(table(unlist(points)))
 points_played
 ```
+![Points played](points played.png)
+
+We also calculated passing percentages (rate of completed throws per player) to visually compare against our plus-minus and points played relationship in the next step (Exploratory Data Analysis).
+
+```markdown
+passing<- plusminus %>% select(Player, Completions= "Catch", Assists="Goal", "Throwaway", "Stall")
+passing$pass_perc <- (passing$Completions + passing$Assists)/ (passing$Completions + passing$Assists + passing$Throwaway + passing$Stall) * 100
+passing
+```
+![passingperc](pass percent.png)
+
 After all this data management, we put all the values we needed into one table.
 ```markdown
 final_df <- plusminus
