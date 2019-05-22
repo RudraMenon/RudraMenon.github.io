@@ -72,7 +72,6 @@ plusminus %>% select(Player, plus_minus)
 ```
 
 Additionally, we needed to calculate how many points each player played.  In order to get these numbers for each person, we had to analyze each line, both offense and defense, for each game of the season.
-
 ```markdown
 library(slam)
 points <- stats %>%
@@ -100,38 +99,60 @@ final_df$per_point <- final_df$points_played / final_df$plus_minus
 
 ### Exploratory Data Analysis
 
-```markdown
-plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
-  geom_point()+ 
-  geom_smooth(method=lm) 
-
-ggplotly(plot, tooltip = c("Player", "plus_minus","points_played"))
-```
-
-Our metric of the Plus-Minus could be misguiding in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  To combat this, we found the average amount of points a player accumulates each time he is on the field to create a fairer comparison. 
+In our exploratory data analysis, we visualize three plots. First, we analyze the per-points averages of players against their actual playing time. We create a trend on this plot that determines how much each player should play based on their performance per-point. This plot will also show if the plus minus system of evaluating skill correctly determines playing time.
 
 ```markdown
 plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
   geom_point()+ 
   geom_smooth(method=lm) 
 
+
 ggplotly(plot, tooltip = c("Player", "per_point","points_played"))
+```
+
+![Per-point vs points played](newplot.png)
+
+Second, we create a plot for plus-minus versus points played. This is a a very direct correlation between playing time and plus-minus performance. From this, we can see if the players with higher or lower plus minuses are getting (or not getting) playing time accordingly. Interestingly enough, the highest plus-minus individual on the team falls below the trend for plus-minus to points played, whereas the second-highest individual lands way above the trend.
+
+```markdown
+plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
+  geom_point()+ 
+  geom_smooth(method=lm) 
+
+
+ggplotly(plot, tooltip = c("Player", "plus_minus","points_played"))
+```
+Last, we create a plot to visualize passing percentage vs points played. This is an interesting plot because it seems to show a very clear trend where players who have a low passing percentage do not play nearly as much as those with higher passing percentages. The trend is exaggerated by the fact that there are no outliers in terms of this principle. All 4 of the lowest passing percentage individuals fall below the trend on this plot. 
+
+```markdown
+pass_perc <- passing
+pass_perc$points_played <- points_played$Freq
+pass_perc <- pass_perc%>%
+  summarise_all(funs(first(na.omit(.)))) %>%
+  select(Player, pass_perc, points_played)
+pass_perc
+
+plot <- pass_perc %>% ggplot(mapping = aes(label=Player, x=pass_perc, y=points_played)) +
+  geom_point()+ 
+  geom_smooth(method=lm) 
+
+
+ggplotly(plot, tooltip = c("Player"))
 ```
 
 ### Hypothesis Testing and Machine Learning
 
 # Null Hypothesis
-As we attempting to see if better players actually get more playing time, we want to know if at least half of the players are within fifty points of what our regression line determines their optimum points played to be.
-Therefore, our null hypothesis is:
+As we attempting to see if better players actually get more playing time, our null hypothesis is:
 
-_50% of players or more do not play the amount of points that they should, plus or minus fifty points._
+_Plus-Minus score will have no effect on playing time._
 
-We set our p value to .5.
+As Plus-Minus is our way of ranking players, our null hypothesis states that rankings will not help predict how much playing time someone gets.
+
 
 
 ### Conclusion
-
-
+Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  Yet, by not making completions (successfully catching the disc as receiver) a component of the Plus-Minus score, we made it more difficult for players that are on the field a lot to abuse this.  By only counting goals and assists--game-making plays--it forces out which players on the team contribute in the most important way to the offense.
 
 
  
