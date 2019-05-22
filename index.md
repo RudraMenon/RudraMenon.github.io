@@ -10,11 +10,11 @@ For many, data science may seem only important or applicable to large companies,
 
 ### The Question
 
-In our experiment, we asked:
+Overall in this endeavor, we sought to discover the answer to this question:
 
 _"Do better players actually get more playing time?"_
 
-While someone may seem to be very skilled in practice, therefore gaining them playing time during tournaments, stats show us if it translates onto the field come game time.  It would be unfortunate if unrecognized, good players were overlooked or if overstated players were relied on too heavily, taking up playing time when they should be benched or developed more.  Specifically, we focused on player performance while on offense.  Through this analysis, we aimed to determine the relationship between offensive stats and playing time.
+While someone may seem to be very skilled in practice, therefore gaining them playing time during tournaments, stats show us if it translates onto the field come game time.  It would be unfortunate if unrecognized, good players were overlooked or if overstated players were relied on too heavily, taking up playing time when they should be benched or developed more.  Specifically, we focused on player performance while on offense, though there were still a myriad of offensive factors to consider when determining the value of each player on the field.  Through this analysis, we aimed to determine the relationship between some of these offensive stats and playing time.
 
 ### Data Curation
 
@@ -99,9 +99,9 @@ final_df$per_point <- final_df$points_played / final_df$plus_minus
 
 ### Exploratory Data Analysis
 
-In our exploratory data analysis, we visualize three plots using scatter plots with a trend. 
+In our exploratory data analysis, we visualized three plots using scatter plots with a trend. 
 
-First, we analyze the per-points averages of players against their actual playing time. We create a trend on this plot that determines how much each player should play based on their performance per-point. This plot will also show if the plus minus system of evaluating skill correctly determines playing time.
+First, we analyzed the per-points averages of players against their actual playing time. We create a trend on this plot that determines how much each player should play based on their performance per-point. This plot will also show if the plus minus system of evaluating skill correctly determines playing time.
 
 ```markdown
 plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
@@ -150,18 +150,23 @@ Overall, it seems that the data that we visualized here seems to align with our 
 
 ### Hypothesis Testing and Machine Learning
 
+In looking at the visual representations of the stats's relationships, we found one to be the most compelling and interesting indicator of good strategy: Points Played vs. Per Point.  This graph, unlike Points Played vs. Plus Minus, takes into account a major fault of the plus-minus system.  Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  We decided to take a closer look at this relationship, the blue line indicating how many points each player should be playing.  In our hypothesis testing, we aimed to determine if there is statistical proof as to whether or not 
+
 # Null Hypothesis
-As we are attempting to see if better players actually get more playing time, our null hypothesis is:
+We want to prove that more than 50% of player on the team get the appropriate amount, as predicted by our analysis in the previous step, within fifty points.  Therefore, our null hypothesis is:
 
-_Plus-Minus score will have no effect on playing time._
+_50% of players or more will not get to play the right amount of points, within fifty points, based on their per_point score._
 
-As Plus-Minus is our way of ranking players, our null hypothesis states that rankings will not help predict how much playing time someone gets.
-
-
-
-### Conclusion
-Our metric of the Plus-Minus may be misguided in ranking our players, as those who don't get a lot of playing time and never messed up when they were on the field may have an unusually high score, while a player who is on a lot has so many more opportunities to make good plays that any mistakes he makes become insignificant.  Yet, by not making completions (successfully catching the disc as receiver) a component of the Plus-Minus score, we made it more difficult for players that are on the field a lot to abuse this.  By only counting goals and assists--game-making plays--it forces out which players on the team contribute in the most important way to the offense.
+# Calucations
 
 
+# Conclusion
+
+Our p value is .8, which is greater than .05.  Therefore, we cannot reject our null hypothesis.
+
+
+### FInal Takeaways 
+
+The numbers can't lie.  Unfortunately for the Space Bastards, they are overusing and underusing players in all the wrong ways.  With this data, the coaches of their team can adjust their subbing patterns so talent isn't so wasted.  
  
 
