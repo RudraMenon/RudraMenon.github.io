@@ -144,9 +144,9 @@ plot <- pass_perc %>% ggplot(mapping = aes(label=Player, x=pass_perc, y=points_p
 
 ggplotly(plot, tooltip = c("Player"))
 ```
-Overall, it seems that the data that we visualized here seems to align with our prediction that higher passing percentage and plus-minus individuals tend to see more playing time on the field.
-
 ![Passing percentage vs points played](image.png)
+
+Overall, it seems that the data that we visualized here seems to align with our prediction that higher passing percentage and plus-minus individuals tend to see more playing time on the field.
 
 ### Hypothesis Testing and Machine Learning
 
