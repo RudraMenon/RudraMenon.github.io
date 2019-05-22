@@ -31,13 +31,16 @@ stats
 ```
 
 ```{r part 2}
-plusminus <- stats
+plusminus <- stats 
+# if Action is drop, make player the receiver, if there is no passer, make it the defender
 plusminus$Player <- ifelse(is.na(plusminus$Passer), plusminus$Defender,
                            ifelse(plusminus$Action == "Drop", plusminus$rec, plusminus$Passer))
 
+# add state for 
 plusminus <- plusminus %>% rbind(plusminus %>%
                                    filter(Action=="Goal") %>%
                                    mutate(Action="Score", Player=rec))
+# count actions per player
 plusminus <- plusminus %>%
   select(Player, Action, rec) %>%
   group_by(Player) %>%
@@ -45,18 +48,21 @@ plusminus <- plusminus %>%
   select(Player, Action, n)
 
 rows <- dim(plusminus)[1]; plusminus <- plusminus[1:(rows - 6),] #Remove last 6 entries, not useful
+
+# reshape dataframe and remove "0" and "Anonymous
 plusminus <- plusminus%>% 
   group_by(Player) %>%
   spread(key="Action",value=n) %>% 
   filter(Player != "0" &  Player != "Anonymous")
 plusminus[is.na(plusminus)] <- 0
 
+# add column for plu_minus
 plusminus$plus_minus <- plusminus$Callahan + plusminus$D + plusminus$Goal+ plusminus$Score - plusminus$Stall - plusminus$Throwaway - plusminus$Drop
 
-plusminus %>% select(Player, plus_minus)
-  
+plusminus
 ```
 ```{r part 3}
+#calculate passing percentage
 passing<- plusminus %>% select(Player, Completions= "Catch", Assists="Goal", "Throwaway", "Stall")
 passing$pass_perc <- (passing$Completions + passing$Assists)/ (passing$Completions + passing$Assists + passing$Throwaway + passing$Stall) * 100
 passing
@@ -65,12 +71,13 @@ passing
 ```
 
 ```{r part 4}
-library(slam)
+# group by point (differentiated by tournament, game, and score)
 points <- stats %>%
   select(tournament, opponent, ourscore, theirscore, p0, p1, p2, p3, p4, p5, p6) %>%
   group_by(tournament, opponent, ourscore, theirscore, p0, p1, p2, p3, p4, p5 ,p6) %>%
   count()
-#TEMPLATE FOR COUNTING POINTS
+
+# count appearances of each name
 points <-points %>% 
   ungroup() %>% 
   select(p0, p1, p2, p3, p4, p5 ,p6)
@@ -81,27 +88,44 @@ points_played
 ```
 
 ``` {r part 5}
-final_df <- plusminus
-final_df$points_played <- points_played$Freq
-final_df <- final_df%>%
+plot1 <- plusminus
+plot1$points_played <- points_played$Freq
+plot1 <- plot1%>%
   group_by(Player) %>%
   summarise_all(funs(first(na.omit(.)))) %>%
   select(Player, plus_minus, points_played)
-final_df$per_point <- final_df$points_played / final_df$plus_minus
+plot1$per_point <- plot1$plus_minus/ plot1$points_played
 ```
 
 ``` {r plot points_played to perpoint}
-plot <- final_df %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
+plot <- plot1 %>% ggplot(mapping = aes(label=Player, x=per_point, y=points_played)) +
   geom_point()+ 
   geom_smooth(method=lm) 
 
 
 ggplotly(plot, tooltip = c("Player", "per_point","points_played"))
-
 ```
 
+```{r get prediction}
+plot1$prediction <- predict(loess(points_played~per_point,plot1), plot1$per_point)
+plot1$diff<- abs(plot1$prediction - plot1$points_played)
+plot1$hyp <- plot1$diff < 50
+
+plot1
+```
+```{r hyp testing}
+n <- 31
+pa <- 0.5 
+ex <- pa
+var_x <- pa * ( 1 - pa) / n
+mean <- length(plot1$hyp[plot1$hyp==TRUE])/n
+
+std <- (sqrt(var_x))
+p_value <- 1-pnorm(mean,ex,std)
+p_value
+```
 ``` {r plot points_played to plusminus}
-plot <- final_df %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
+plot <- plot1 %>% ggplot(mapping = aes(label=Player, x=plus_minus, y=points_played)) +
   geom_point()+ 
   geom_smooth(method=lm) 
 
