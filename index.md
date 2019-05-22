@@ -48,7 +48,7 @@ The biggest portion of this step was dedicated to calculating the Plus-Minus val
 {r part 2}
 plusminus <- stats
 plusminus$Player <- ifelse(is.na(plusminus$Passer), plusminus$Defender,
-                           ifelse(plusminus$Action == "Drop", plusminus$rec, plusminus$Passer))
+                      ifelse(plusminus$Action == "Drop", plusminus$rec, plusminus$Passer))
 
 plusminus <- plusminus %>% rbind(plusminus %>%
                                    filter(Action=="Goal") %>%
@@ -66,7 +66,9 @@ plusminus <- plusminus%>%
   filter(Player != "0" &  Player != "Anonymous")
 plusminus[is.na(plusminus)] <- 0
 
-plusminus$plus_minus <- plusminus$Callahan + plusminus$D + plusminus$Goal+ plusminus$Score - plusminus$Stall - plusminus$Throwaway - plusminus$Drop
+plusminus$plus_minus <- plusminus$Callahan + 
+ plusminus$D + plusminus$Goal+ plusminus$Score - 
+ plusminus$Stall - plusminus$Throwaway - plusminus$Drop
 
 plusminus %>% select(Player, plus_minus)
 ```
